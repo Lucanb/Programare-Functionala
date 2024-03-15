@@ -88,11 +88,62 @@ fiboaux n a b | n == 0 = a
 -- a si b sunt doua numere Fibonacci consecutive
 fibo' :: Integer -> Integer
 fibo' n = fiboaux n 0 1
---7
 
+-- O(log n) se va folosi inmultirea de matrici. --| >
+data FibMatrix = FibMatrix Integer Integer deriving (Show)
+
+instance Num FibMatrix where
+    FibMatrix a b + FibMatrix c d = FibMatrix (a + c) (b + d)
+    FibMatrix a b * FibMatrix c d = FibMatrix (a * c + b * c) (a * d + b * d)
+    fromInteger n = FibMatrix n 0
+    negate (FibMatrix a b) = FibMatrix (negate a) (negate b)
+    abs (FibMatrix a b) = FibMatrix (abs a) (abs b)
+    signum (FibMatrix a _) = fromInteger $ signum a
+
+matrixMult :: FibMatrix -> FibMatrix -> FibMatrix
+(FibMatrix a b) `matrixMult` (FibMatrix c d) =
+    FibMatrix (a*c + b*d) (a*d + b*c + b*d)
+
+fiboLog :: Integer -> Integer
+fiboLog n
+    | n < 0     = error "Argument negativ"
+    | otherwise = let (FibMatrix _ fn) = fibMatrix ^ n
+                  in fn
+    where
+        fibMatrix :: FibMatrix
+        fibMatrix = FibMatrix 1 1 ^ n
+
+
+--7
+extendedEuclid :: Integer -> Integer -> (Integer, Integer, Integer)
+extendedEuclid a b
+                    | b == 0    = (a, 1, 0)
+                    | otherwise = let (d, x', y') = extendedEuclid b (a `mod` b)
+                                in (d, y', x' - (a `div` b) * y')
+                                
 succ' :: Integer -> Integer
 succ' x = x + 1
 --8
 add' :: Integer -> Integer -> Integer
-add' x y | y==0 = x
-         |otherwise = add' (succ' x) (pred y)
+add' x y 
+    | y == 0    = x
+    | otherwise = add' (succ' x) (pred y)
+
+mul' :: Integer -> Integer -> Integer
+mul' _ 0 = 0
+mul' x y = add' x (mul' x (pred y))
+
+pow' :: Integer -> Integer -> Integer
+pow' _ 0 = 1
+pow' x y = mul' x (pow' x (pred y))
+
+--9
+mod' :: Integer -> Integer -> Integer
+mod' x y
+    | x < y     = x
+    | otherwise = mod' (x - y) y
+
+div' :: Integer -> Integer -> Integer
+div' x y
+    | x < y     = 0
+    | otherwise = 1 + div' (x - y) y
