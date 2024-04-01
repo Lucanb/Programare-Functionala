@@ -1,4 +1,5 @@
 --Ex 1.2
+{-# OPTIONS_GHC -Wno-overlapping-patterns #-}
 
 data MobileDevice = Smartphone
                   | Laptop
@@ -31,16 +32,20 @@ data Arb = Frunza | Nod Integer Arb Arb deriving (Show, Eq)
 
 --Ex 2.2
 minBST :: Arb -> Integer
-minBST Frunza = error "Arborele este vid"
-minBST (Nod val Frunza _) = val
-minBST (Nod _ stanga _) = minBST stanga
+minBST Frunza = error "Arborele este gol!"
+minBST (Nod val Frunza Frunza) = val
+minBST (Nod val st Frunza) = minBST st
+minBST (Nod val Frunza dr) = minBST dr
+minBST (Nod val st dr) = min (minBST st) (minBST dr)
 
---Ex 2.3
+-- 2.3
 
 maxBST :: Arb -> Integer
-maxBST Frunza = error "Arborele este vid"
+maxBST Frunza = error "Arborele este gol!"
 maxBST (Nod val _ Frunza) = val
-maxBST (Nod _ _ dreapta) = maxBST dreapta
+maxBST (Nod val _ dreapta) = maxBST dreapta
+maxBST (Nod val st dr) = maxBST dr
+
 
 --Ex 2.4
 

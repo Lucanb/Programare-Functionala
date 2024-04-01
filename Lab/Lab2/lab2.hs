@@ -56,9 +56,9 @@ binaryEuclid a b
 -- 4
 -- Da este posibil : urmatoarele exemple :
 scaderiEuclid' :: Integer -> Integer -> Integer -> Integer
-scaderiEuclid' a b acc | b == 0 = a + acc
-scaderiEuclid' a b acc | a > b = scaderiEuclid' (a-b) b (acc + b)
-                       | otherwise = scaderiEuclid' a (b-a) (acc + a)
+scaderiEuclid' a b acc  | a == b = a + acc
+                        | a > b = scaderiEuclid' (a - b) b acc
+                        | otherwise = scaderiEuclid' a (b - a) acc
 
 
 impartiriEuclid' :: Integer -> Integer -> Integer -> Integer -> Integer
