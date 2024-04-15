@@ -54,9 +54,9 @@ filterList p (x:xs)
 
 --2.7
 
-foldl:: (a -> a -> a) -> a -> [a] -> a
-foldl f z []     = z                  
-foldl f z (x:xs) = foldl f (f z x) xs
+foldl':: (a -> a -> a) -> a -> [a] -> a
+foldl' f z []     = z                  
+foldl' f z (x:xs) = foldl' f (f z x) xs
 
 --2.8
 

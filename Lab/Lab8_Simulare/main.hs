@@ -33,3 +33,11 @@ quickSort :: [Int] -> (Int -> Int -> Bool) -> [Int]
 quickSort [] _     = []
 quickSort (p:xs) compFunc =
     quickSort (filter (\x -> compFunc x p) xs) compFunc ++ [p] ++ quickSort (filter (\x -> not (compFunc x p)) xs) compFunc
+
+data Arbore = Frunza | Nod Integer Arbore Arbore deriving(Show,Eq)
+minBst :: Arbore -> Integer
+minBst Frunza = error "Nu gasesc"
+minBst (Nod val Frunza Frunza) = val
+minBst (Nod val st Frunza) = minBst st
+minBst (Nod val Frunza dr) = minBst dr
+minBst (Nod val st dr) =   min (minBst st) (minBst dr)
