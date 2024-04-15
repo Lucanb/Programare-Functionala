@@ -82,21 +82,39 @@ instance Ord Nat where
                                     |otherwise = compareBits hd tl    
 
 
-instance Integral Nat where
+instance Enum Nat where
+    toEnum i = Cons (toBits i)
+    fromEnum (Cons bits) = fromBits bits
 
+toBits :: Int -> [Bool]
+toBits 0 = []
+toBits i = (i `mod` 2 == 1) : toBits (i `div` 2)
+
+fromBits :: [Bool] -> Int
+fromBits = foldl (\acc x -> acc * 2 + if x then 1 else 0) 0 . reverse
+
+instance Real Nat where
+    toRational (Cons bits) = toRational (toInteger (Cons bits))
+
+instance Integral Nat where
     toInteger (Cons []) = 0
     toInteger (Cons bits) = sum [if b then 2^i else 0 | (i, b) <- zip [0..] (reverse bits)]
-    quot (Cons []) _ = error "Nu se poate imparti la 0"
-    quot _ (Cons []) = error "Nu se poate imparti la 0"
-    quot (Cons a) (Cons b) = Cons (divide a b)
+    quotRem (Cons []) _ = error "Cannot divide by zero"
+    quotRem _ (Cons []) = error "Cannot divide by zero"
+    quotRem (Cons a) (Cons b) = (Cons (divide a b), Cons (remainder a b))
         where
-            divide _ [] = [] 
-            divide [] _ = [] 
+            divide _ [] = []
+            divide [] _ = []
             divide (False:as) (False:bs) = False : divide as bs
             divide (True:as) (False:bs) = True : divide as bs
             divide (False:as) (True:bs) = False : divide as (False:bs)
-            divide (True:as) (True:bs) = True : divide (zipWith (/=) as bs) bs
+            divide (True:as) (True:bs) = True : divide (zipWith xor as bs) bs
+            remainder _ [] = []
+            remainder [] _ = []
+            remainder as bs = zipWith xor as bs
 
+xor :: Bool -> Bool -> Bool
+xor a b = (a || b) && not (a && b)
     
 instance Num Nat where
 
